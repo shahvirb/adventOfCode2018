@@ -10,7 +10,6 @@ def checksum(code):
     return counts_dict
 
 
-
 def part1(input):
     twos = 0
     threes = 0
