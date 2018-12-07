@@ -7,10 +7,10 @@ def part1(input):
 def part2(input):
     sum = 0
     freqs = set([sum])
-
+    vals = [int(l) for l in input.splitlines()]
     while True: #TODO not very safe if frequency doesn't repeat
-        for line in input.splitlines():
-            sum += int(line)
+        for n in vals:
+            sum += n
             if sum in freqs:
                 return sum
             else:
