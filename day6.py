@@ -1,13 +1,16 @@
 import inputreader
 import numpy
+import math
 
 def distance(a, b):
-    return sum(numpy.abs(b - a))
+    #return sum(numpy.abs(b - a))
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
 def parse_line(line):
     vals = line.split(', ')
     return numpy.array([int(v) for v in vals])
+
 
 def make_grid(capitals):
     def calc_bounds(capitals):
@@ -47,5 +50,9 @@ def part1(input):
 
 if __name__ == "__main__":
     input = inputreader.read2018('day6.txt')
+    # import timeit
+    # def profile():
+    #     print(part1(input))
+    # print(timeit.timeit(profile, number=1))
     print(part1(input))
     #print(part2(input))
