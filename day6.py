@@ -1,6 +1,6 @@
 import inputreader
 import numpy
-import math
+
 
 def distance(a, b):
     #return sum(numpy.abs(b - a))
