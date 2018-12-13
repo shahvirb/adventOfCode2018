@@ -21,4 +21,5 @@ REGISTRATION = [
     ('2018.6.1', day6.part1),
     ('2018.6.2', day6.part2),
     ('2018.7.1', day7.part1),
+    ('2018.7.2', day7.part2),
 ]
