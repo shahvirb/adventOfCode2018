@@ -75,12 +75,13 @@ def part1(input):
             graph = points.copy()
         if size > best:
             break
-    print(best_t, best)
     graph = move(graph, t=-1)
-    draw(graph)
+    return graph, best_t+step
 
 
 if __name__ == "__main__":
     input = inputreader.read2018('day10.txt')
-    print(part1(input))
+    img, best = part1(input)
+    print(best)
+    draw(img)
     #print(part2(input))
