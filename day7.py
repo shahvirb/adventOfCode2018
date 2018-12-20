@@ -86,7 +86,7 @@ def part1(input):
     lines = [parse_line(line) for line in input.splitlines()]
     graph = StepsGraph(lines)
     result = ''.join([step for step in graph.path()])
-    print(len(graph.steps), len(result))
+    #print(len(graph.steps), len(result))
     return result
 
 
