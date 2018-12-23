@@ -67,7 +67,6 @@ def part1(input):
             graph = [p for p in moved]
         if size > best:
             break
-    #graph = move(graph, t=-1)
     return graph, best_t
 
 NUM_DIVI = 4
@@ -81,14 +80,14 @@ def fast_part1(input):
         return int((end - start) / (NUM_DIVI - 1))
 
     step = calc_step(start, end)
-    while step != 1:
+    while step > 0:
         search = [(t, bounding_area(move(points, t))) for t in [start+a*step for a in range(0, NUM_DIVI)]]
         min_ind = search.index(min(search, key=lambda x: x[1]))
         assert min_ind != 0
         assert min_ind != len(search) - 1
         if step <= 1:
-            t = search[min_ind][0]+step
-            graph = move(points, t-step)
+            t = search[min_ind][0]
+            graph = move(points, t)
             return graph, t
         start = search[min_ind-1][0]
         end = search[min_ind+1][0]
@@ -98,9 +97,14 @@ def fast_part1(input):
 
 if __name__ == "__main__":
     input = inputreader.read2018('day10.txt')
-    img, best = part1(input)
-    draw(img)
     img, best = fast_part1(input)
+    draw(img)
     print(best)
+
+    img, best = part1(input)
+    #draw(img)
+    print(best)
+
+
     #draw(img)
     #print(part2(input))
