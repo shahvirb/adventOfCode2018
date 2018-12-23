@@ -1,4 +1,4 @@
-import collections
+#import collections
 import inputreader
 import re
 import numpy
@@ -6,11 +6,13 @@ import plotly
 
 
 #position=< 21459,  32026> velocity=<-2, -3>
-
 class Point():
-    def __init__(self):
-        self.pos = None
-        self.vel = None
+    def __init__(self, pos, vel):
+        self.pos = pos
+        self.vel = vel
+
+    def __repr__(self):
+        return '{}, {}'.format(self.pos, self.vel)
 
 
 LINE_REGEX = re.compile(r'position=<(.*)> velocity=<(.*)>')
@@ -20,21 +22,12 @@ def parse_line(text):
 
     line = LINE_REGEX.match(text)
     #parsed = collections.namedtuple('Line', 'pos vel')
-    parsed = Point()
-    parsed.pos = read_vals(line.group(1))
-    parsed.vel = read_vals(line.group(2))
+    parsed = Point(read_vals(line.group(1)), read_vals(line.group(2)))
     return parsed
 
 
-def moved(points, t=1):
-    for i in range(len(points)):
-        points[i].pos += points[i].vel * t
-
-
-def move(points, t=1):
-    for p in points:
-        p.pos += p.vel * t
-    return points
+def move(points, t):
+    return [Point(p.pos + t * p.vel, p.vel) for p in points]
 
 
 def draw(points):
@@ -57,31 +50,57 @@ def bounding_area(points):
     #print(x_max, y_max)
     return x_max*y_max
 
+
 def part1(input):
     points = [parse_line(line) for line in input.splitlines()]
-    best = bounding_area(points)
-    graph = None
     step = 1
     start = 10000
     end = 11000
-    moved(points, t=start)
+    best = bounding_area(move(points, start))
     for t in range(start, end, step):
-        points = move(points, t=step)
-        size = bounding_area(points)
+        moved = move(points, t)
+        size = bounding_area(moved)
         #print(t, size)
         if size <= best:
             best = size
             best_t = t
-            graph = points.copy()
+            graph = [p for p in moved]
         if size > best:
             break
-    graph = move(graph, t=-1)
-    return graph, best_t+step
+    #graph = move(graph, t=-1)
+    return graph, best_t
+
+NUM_DIVI = 4
+def fast_part1(input):
+    points = [parse_line(line) for line in input.splitlines()]
+    start = 0
+    points = move(points, start)
+    end = 15000
+
+    def calc_step(start, end):
+        return int((end - start) / (NUM_DIVI - 1))
+
+    step = calc_step(start, end)
+    while step != 1:
+        search = [(t, bounding_area(move(points, t))) for t in [start+a*step for a in range(0, NUM_DIVI)]]
+        min_ind = search.index(min(search, key=lambda x: x[1]))
+        assert min_ind != 0
+        assert min_ind != len(search) - 1
+        if step <= 1:
+            t = search[min_ind][0]+step
+            graph = move(points, t-step)
+            return graph, t
+        start = search[min_ind-1][0]
+        end = search[min_ind+1][0]
+        step = calc_step(start, end)
+    return None
 
 
 if __name__ == "__main__":
     input = inputreader.read2018('day10.txt')
     img, best = part1(input)
-    print(best)
     draw(img)
+    img, best = fast_part1(input)
+    print(best)
+    #draw(img)
     #print(part2(input))
