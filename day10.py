@@ -1,4 +1,5 @@
 #import collections
+import bisect
 import inputreader
 import re
 import numpy
@@ -69,6 +70,23 @@ def part1(input):
             break
     return graph, best_t
 
+
+class SearchResults:
+    def __init__(self):
+        self.times = []
+        self.scores = []
+
+    def __contains__(self, item):
+        return item in self.times
+
+    def add_hit(self, time, score):
+        assert time not in self.times
+        i = bisect.bisect_left(self.times, time)
+        self.times.insert(i, time)
+        self.scores.insert(i, score)
+        return i
+
+
 NUM_DIVI = 4
 def fast_part1(input):
     points = [parse_line(line) for line in input.splitlines()]
@@ -80,25 +98,30 @@ def fast_part1(input):
         return int((end - start) / (NUM_DIVI - 1))
 
     step = calc_step(start, end)
+    results = SearchResults()
     while step > 0:
-        search = [(t, bounding_area(move(points, t))) for t in [start+a*step for a in range(0, NUM_DIVI)]]
-        min_ind = search.index(min(search, key=lambda x: x[1]))
+        steps = [start+a*step for a in range(0, NUM_DIVI)]
+        new_steps = [s for s in steps if s not in results]
+        for t in new_steps:
+            results.add_hit(t, bounding_area(move(points, t)))
+        min_ind = results.scores.index(min(results.scores))
         assert min_ind != 0
-        assert min_ind != len(search) - 1
+        assert min_ind != len(results.times) - 1
         if step <= 1:
-            t = search[min_ind][0]
+            t = results.times[min_ind]
             graph = move(points, t)
             return graph, t
-        start = search[min_ind-1][0]
-        end = search[min_ind+1][0]
+        start = results.times[min_ind-1]
+        end = results.times[min_ind+1]
         step = calc_step(start, end)
     return None
 
 
 if __name__ == "__main__":
     input = inputreader.read2018('day10.txt')
+
     img, best = fast_part1(input)
-    draw(img)
+    #draw(img)
     print(best)
 
     img, best = part1(input)
