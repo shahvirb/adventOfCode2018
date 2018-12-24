@@ -124,10 +124,5 @@ if __name__ == "__main__":
     #draw(img)
     print(best)
 
-    img, best = part1(input)
-    #draw(img)
-    print(best)
-
-
     #draw(img)
     #print(part2(input))
